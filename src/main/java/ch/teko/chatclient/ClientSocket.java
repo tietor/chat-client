@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.teko.chatclient.server.Command;
+import ch.teko.chatclient.server.Server;
 
 import javafx.scene.control.TextArea;
 
@@ -23,14 +24,12 @@ public class ClientSocket {
 
   private boolean isRunning = true;
 
-  private Thread fetchMessagesThread;
-
   public ClientSocket(int destinationPort) {
     this.destinationPort = destinationPort;
   }
 
   public void connectToServerWithUsername(String username) {
-    Thread thread = new Thread(() -> {
+    Thread connectToServer = new Thread(() -> {
       try {
         System.out.println("Connecting to server...");
         this.serverSocketResponse = new Socket(InetAddress.getByName("127.0.0.1"), destinationPort);
@@ -41,11 +40,11 @@ public class ClientSocket {
         throw new RuntimeException(e);
       }
     });
-    thread.start();
+    connectToServer.start();
   }
 
   public void fetchMessagesEverySecond(TextArea chatHistory) {
-    this.fetchMessagesThread = new Thread(() -> {
+    Thread fetchMessages = new Thread(() -> {
       while (isRunning) {
         requestChatMessages();
         List<Message> messages = getChatMessages();
@@ -61,7 +60,7 @@ public class ClientSocket {
         }
       }
     });
-    this.fetchMessagesThread.start();
+    fetchMessages.start();
   }
 
   private ArrayList<Message> getChatMessages() {
@@ -76,14 +75,7 @@ public class ClientSocket {
   }
 
   private void requestChatMessages() {
-    try {
-      System.out.println("Requesting chat messages...");
-      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(serverSocketResponse.getOutputStream()));
-      writer.write("get#50" + END_OF_LINE);
-      writer.flush();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    sendMessageWithCommand(Command.GET, String.valueOf(Server.DEFAULT_AMOUNT_OF_MESSAGES));
   }
 
   public void sendExitMessage() {
@@ -97,10 +89,10 @@ public class ClientSocket {
     }
   }
 
-  public void sendMessage(String message) {
+  public void sendMessageWithCommand(Command command, String message) {
     try {
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(serverSocketResponse.getOutputStream()));
-      writer.write("send#" + message + END_OF_LINE);
+      writer.write(command.name() + "#" + message + END_OF_LINE);
       writer.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);

@@ -1,5 +1,7 @@
 package ch.teko.chatclient;
 
+import ch.teko.chatclient.server.Command;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -33,7 +35,7 @@ public class HelloController {
   @FXML
   protected void sendMessage() {
     if (isUserConnected()) {
-      clientSocket.sendMessage(message.getText());
+      clientSocket.sendMessageWithCommand(Command.SEND, message.getText());
     } else {
       errorMessage.setText("Please connect to the server");
     }

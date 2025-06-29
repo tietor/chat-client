@@ -1,10 +1,5 @@
 package ch.teko.chatclient.server;
 
-import static ch.teko.chatclient.server.Command.EXIT;
-import static ch.teko.chatclient.server.Command.GET;
-import static ch.teko.chatclient.server.Command.REGISTER;
-import static ch.teko.chatclient.server.Command.SEND;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -73,9 +68,9 @@ public class Server {
       while (isRunning) {
         try {
           final String clientInput = input.readLine();
-          if (EXIT.equalsIgnoreCase(clientInput)) {
+          if (Command.EXIT.name().equalsIgnoreCase(clientInput)) {
             isRunning = false;
-            System.out.println("received exit command");
+            System.out.println("received " + Command.EXIT.name() + " command");
             return;
           }
           final String[] requestInfo = clientInput.split("#", 2);
@@ -90,26 +85,18 @@ public class Server {
       }
     }
 
-    private void processRequest(String command, String input) throws InterruptedException, IOException {
-      System.out.println("received " + command + " command");
+    private void processRequest(String requiredCommand, String input) throws InterruptedException, IOException {
+      System.out.println("received " + requiredCommand + " command");
+      Command command = Command.valueOf(requiredCommand.toUpperCase());
       switch (command) {
         case GET -> {
           semaphore.acquire(1);
           final int amountOfMessages = messageHistory.size();
           try {
             int requiredAmountOfMessages = Integer.parseInt(input);
-            final List<Message> messages = new ArrayList<>(
-                messageHistory.subList(Math.max(amountOfMessages - requiredAmountOfMessages, 0), amountOfMessages));
-            ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-            outputStream.writeObject(messages);
-            outputStream.flush();
+            sendMessagesToClient(amountOfMessages, requiredAmountOfMessages);
           } catch (NumberFormatException e) {
-            final List<Message> messages = new ArrayList<>(
-                messageHistory.subList(Math.max(amountOfMessages - DEFAULT_AMOUNT_OF_MESSAGES, 0),
-                    messageHistory.size()));
-            ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-            outputStream.writeObject(messages);
-            outputStream.flush();
+            sendMessagesToClient(amountOfMessages, DEFAULT_AMOUNT_OF_MESSAGES);
           }
           semaphore.release(1);
         }
@@ -119,8 +106,16 @@ public class Server {
           semaphore.release(MAX_CLIENT_THREADS);
         }
         case REGISTER -> user = input;
-        case null, default -> throw new IllegalArgumentException("unknown RequestType#" + command);
+        default -> throw new IllegalArgumentException("unknown RequestType#" + requiredCommand);
       }
+    }
+
+    private void sendMessagesToClient(int amountOfMessages, int requiredAmountOfMessages) throws IOException {
+      final List<Message> messages = new ArrayList<>(
+          messageHistory.subList(Math.max(amountOfMessages - requiredAmountOfMessages, 0), amountOfMessages));
+      ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+      outputStream.writeObject(messages);
+      outputStream.flush();
     }
   }
 }
