@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import ch.teko.chatclient.Command;
 import ch.teko.chatclient.Message;
 
 public class Server {

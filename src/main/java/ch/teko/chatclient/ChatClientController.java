@@ -1,7 +1,5 @@
 package ch.teko.chatclient;
 
-import ch.teko.chatclient.server.Command;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -36,6 +34,7 @@ public class ChatClientController {
   protected void sendMessage() {
     if (isUserConnected()) {
       clientSocket.sendMessageWithCommand(Command.SEND, message.getText());
+      message.clear();
     } else {
       errorMessage.setText("Please connect to the server");
     }

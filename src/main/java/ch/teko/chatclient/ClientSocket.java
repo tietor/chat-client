@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.teko.chatclient.server.Command;
 import ch.teko.chatclient.server.Server;
 
 import javafx.scene.control.TextArea;
