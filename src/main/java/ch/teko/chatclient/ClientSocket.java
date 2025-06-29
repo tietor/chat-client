@@ -34,7 +34,7 @@ public class ClientSocket {
         System.out.println("Connecting to server...");
         this.serverSocketResponse = new Socket(InetAddress.getByName("127.0.0.1"), destinationPort);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(serverSocketResponse.getOutputStream()));
-        writer.write("register#" + username + END_OF_LINE);
+        writer.write(Command.REGISTER + "#" + username + END_OF_LINE);
         writer.flush();
       } catch (IOException e) {
         throw new RuntimeException(e);
