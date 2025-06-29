@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.teko.chatclient.HelloController">
+<VBox alignment="CENTER" maxHeight="-Infinity" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.teko.chatclient.ChatClientController">
    <HBox>
       <children>
          <Button fx:id="connectButton" mnemonicParsing="false" onAction="#connectToServer" text="Verbinden" />

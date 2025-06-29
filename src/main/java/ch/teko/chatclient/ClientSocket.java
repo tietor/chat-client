@@ -81,6 +81,7 @@ public class ClientSocket {
   public void sendExitMessage() {
     isRunning = false;
     try {
+      System.out.println("sending exit command");
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(serverSocketResponse.getOutputStream()));
       writer.write(Command.EXIT + END_OF_LINE);
       writer.flush();
@@ -90,6 +91,7 @@ public class ClientSocket {
   }
 
   public void sendMessageWithCommand(Command command, String message) {
+    System.out.println("sending " + command.name() + " command with message: " + message);
     try {
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(serverSocketResponse.getOutputStream()));
       writer.write(command.name() + "#" + message + END_OF_LINE);

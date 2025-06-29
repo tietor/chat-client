@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
-public class HelloController {
+public class ChatClientController {
 
   @FXML
   private TextField username;
@@ -39,7 +39,6 @@ public class HelloController {
     } else {
       errorMessage.setText("Please connect to the server");
     }
-
   }
 
   private static boolean isUserConnected() {
