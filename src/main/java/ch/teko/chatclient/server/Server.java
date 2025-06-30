@@ -21,8 +21,6 @@ public class Server {
   public static final int DEFAULT_AMOUNT_OF_MESSAGES = 50;
   public static final int MAX_CLIENT_THREADS = 10;
 
-  private boolean isRunning = false;
-
   public Server() {
     start();
   }
@@ -38,7 +36,6 @@ public class Server {
       System.out.println("chat server started");
       new Connection().start();
       semaphore = new Semaphore(10);
-      isRunning = true;
     } catch (IOException e) {
       System.out.println("unable to start chat.server.");
       e.printStackTrace();
@@ -50,6 +47,7 @@ public class Server {
     private String user;
     private BufferedReader input;
     private Socket clientSocket;
+    private boolean isConnectionRunning = true;
 
     @Override
     public void run() {
@@ -66,11 +64,11 @@ public class Server {
     }
 
     private void receiveMessage() {
-      while (isRunning) {
+      while (isConnectionRunning) {
         try {
           final String clientInput = input.readLine();
           if (Command.EXIT.name().equalsIgnoreCase(clientInput)) {
-            isRunning = false;
+            isConnectionRunning = false;
             System.out.println("received " + Command.EXIT.name() + " command");
             return;
           }
